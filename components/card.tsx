@@ -5,9 +5,9 @@ interface CardProps {
     lastMessage: string;
 }
 
-export default function Card({ title, status, content,  lastMessage}: CardProps) {
+export default function Card({ title, status, content,  lastMessage }: CardProps) {
     return (
-        <div className="w-full rounded-xl bg-muted/50 p-4 shadow-lg">
+        <div className="w-full rounded-xl bg-muted/30 p-4 shadow-lg">
             <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">{title}</h2>
                 <div className="flex items-center justify-end">

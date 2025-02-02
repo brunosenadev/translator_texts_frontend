@@ -22,7 +22,7 @@ export function DataTable<TData, TValue>({
                 {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                         {headerGroup.headers.map((header) => (
-                            <TableHead key={header.id}>
+                            <TableHead key={header.id} className="font-bold">
                                 {header.isPlaceholder
                                     ? null
                                     : flexRender(

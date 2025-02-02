@@ -1,6 +1,4 @@
-"use client";
-
-import Main from '@/app/pages/main'
+import Main from '@/app/management/page'
 
 export default function Home() {
   return (

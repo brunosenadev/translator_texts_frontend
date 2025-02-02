@@ -47,6 +47,7 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 const data = {
   user: {
@@ -64,10 +65,6 @@ const data = {
           title: "Main",
           url: "/",
         },
-        {
-          title: "Status",
-          url: "/status",
-        },
       ],
     },
     {
@@ -77,7 +74,7 @@ const data = {
       items: [
         {
           title: "Settings",
-          url: "/users",
+          url: "/numbers_and_sessions",
         },
       ],
     },
@@ -149,9 +146,9 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                         {item.items?.map((subItem) => (
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton asChild>
-                              <a href={subItem.url}>
+                              <Link href={subItem.url}>
                                 <span>{subItem.title}</span>
-                              </a>
+                              </Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         ))}
