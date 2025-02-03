@@ -2,6 +2,8 @@
 
 import CardWithDatatable from "@/components/card-datatable";
 import Card from "@/components/card";
+import { Button } from "@/components/ui/button";
+import { FaEdit, FaStop, FaPlay } from "react-icons/fa";
 
 export default function Main() {
     const columns: ColumnsDefMainType = [
@@ -25,11 +27,31 @@ export default function Main() {
                     <span
                         className={`h-3 w-3 mr-2 mt-2 rounded-full ${row.original.status.toLowerCase() === "online" ? "bg-green-500" : "bg-red-500"
                             }`}
-                    /> 
+                    />
                     <p className="mt-2 text-sm font-bold">{row.original.status.toLowerCase() === "online" ? "Online" : "Offline"}</p>
                 </div>
             )
         },
+        {
+            accessorKey: "actions",
+            header: "Actions",
+            cell: () => (
+                <div className="flex justify-center">
+                    <Button className="w-[150px] bg-slate-600 text-white">
+                        <FaEdit />
+                        Editar
+                    </Button>
+                    <Button className="w-[150px] bg-blue-600 ml-2 text-white">
+                        <FaPlay />
+                        Iniciar
+                    </Button>
+                    <Button className="w-[150px] bg-red-600 ml-2 text-white">
+                        <FaStop />
+                        Parar
+                    </Button>
+                </div>
+            )
+        }
     ];
 
     const data: DataMain[] = [

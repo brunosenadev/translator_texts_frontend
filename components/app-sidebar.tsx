@@ -10,7 +10,6 @@ import {
   LogOut,
   Users,
   FileText,
-  Phone
 } from "lucide-react";
 
 import { 
@@ -65,19 +64,27 @@ const data = {
           title: "Main",
           url: "/",
         },
-      ],
-    },
-    {
-      title: "Numbers and Sessions",
-      url: "#",
-      icon: Phone,
-      items: [
         {
-          title: "Settings",
-          url: "/numbers_and_sessions",
+          title: "Numbers Settings",
+          url: "/numbers",
+        },
+        {
+          title: "Servers Settings",
+          url: "/servers",
         },
       ],
     },
+    // {
+    //   title: "Numbers and Sessions",
+    //   url: "#",
+    //   icon: Phone,
+    //   items: [
+    //     {
+    //       title: "Settings",
+    //       url: "/numbers_and_sessions",
+    //     },
+    //   ],
+    // },
     {
       title: "Users",
       url: "#",
