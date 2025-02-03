@@ -25,14 +25,10 @@ export default function Main() {
                     <span
                         className={`h-3 w-3 mr-2 mt-2 rounded-full ${row.original.status.toLowerCase() === "online" ? "bg-green-500" : "bg-red-500"
                             }`}
-                    />
+                    /> 
                     <p className="mt-2 text-sm font-bold">{row.original.status.toLowerCase() === "online" ? "Online" : "Offline"}</p>
                 </div>
             )
-        },
-        {
-            accessorKey: "actions",
-            header: "Actions",
         },
     ];
 
@@ -42,21 +38,18 @@ export default function Main() {
             number: "+55474071",
             lastMessage: "21h30",
             status: "Online",
-            actions: "None",
         },
         {
             whatsapp: "Sispzap2",
             number: "+55472632",
             lastMessage: "02h45",
-            status: "Offline",
-            actions: "None",
+            status: "Offline"
         },
         {
             whatsapp: "Sispzap3",
             number: "+472679",
             lastMessage: "09h50",
             status: "Online",
-            actions: "None",
         },
     ];
 
