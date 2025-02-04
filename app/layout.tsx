@@ -15,7 +15,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Admin WarmUP Whatsapp",
+  title: "Admin | WarmUP Whatsapp",
   description: "Administrador do serviço de aquecimento de números de whatsapp.",
 };
 
