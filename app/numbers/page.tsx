@@ -30,16 +30,59 @@ export default function Numbers() {
 
     const { request, loading } = useApiRequest();
 
-    const handleRemove = async (e: React.FormEvent) => {
+    const handleRemove = async () => {
+        setMessage("");
+        
+        try {
+            if (formData.id == "") {
+                setMessage("Necessário ter id em tela para poder excluir um registro");
+                setShowConfirmation(true);
+                setShowButtonCancel(false);
+                setConfirmationAction(() => () => {
+                    setShowConfirmation(false);
+                });
+                return
+            } 
 
-    };
+            const response = await request({
+                url: `/number/${formData.id}`,
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response) {
+                setMessage(`Número do ${response.name} excluído com sucesso!`);
+                handleReset();
+                setShowConfirmation(true);
+                setShowButtonCancel(false);
+
+                setConfirmationAction(() => () => {
+                    setVisibleButtonsEdit(false);
+                    handleReset();
+                    setShowConfirmation(false);
+                });
+            }
+        } catch (error: any) {
+            setMessage(error.message);
+            setShowConfirmation(true);
+            setShowButtonCancel(false);
+
+            setConfirmationAction(() => () => {
+                setVisibleButtonsEdit(false);
+                setShowConfirmation(false);
+                handleReset();
+            }); 
+        }
+    };  
 
     const handleUpdate = async () => {
         setMessage("");
         
         try {
             if (formData.id == "") {
-                setMessage("Necessário ter id em tela para poder excluir um registro");
+                setMessage("Necessário ter id em tela para poder atualizar um registro");
                 setShowConfirmation(true);
                 setShowButtonCancel(false);
                 setConfirmationAction(() => () => {
