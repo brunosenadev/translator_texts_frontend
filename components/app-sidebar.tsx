@@ -72,19 +72,12 @@ const data = {
           title: "Servers Settings",
           url: "/servers",
         },
+        {
+          title: "Sessions Settings",
+          url: "/sessions",
+        },
       ],
     },
-    // {
-    //   title: "Numbers and Sessions",
-    //   url: "#",
-    //   icon: Phone,
-    //   items: [
-    //     {
-    //       title: "Settings",
-    //       url: "/numbers_and_sessions",
-    //     },
-    //   ],
-    // },
     {
       title: "Users",
       url: "#",
