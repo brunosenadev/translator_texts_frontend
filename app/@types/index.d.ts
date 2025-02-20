@@ -1,5 +1,4 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { StringToBoolean } from "class-variance-authority/types";
 
 declare global {
     export interface DataMain {
