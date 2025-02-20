@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import useApiRequest from "@/hooks/use-api-request";
 
 type Star = {
     id: number;
@@ -11,7 +12,7 @@ type Star = {
     left: number;
     opacity: number;
     duration: number;
-  };
+};
 
 export default function Login() {
     const router = useRouter();
@@ -21,7 +22,10 @@ export default function Login() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isRegistering, setIsRegistering] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
     const [stars, setStars] = useState<Star[]>([]);
+    const [elementRegisterDisabled, setElementRegisterDisabled] = useState(false);
+    const { request } = useApiRequest();
 
     useEffect(() => {
         const generatedStars = Array.from({ length: 100 }).map((_, i) => ({
@@ -42,12 +46,57 @@ export default function Login() {
         router.refresh();
     };
 
-    const handleRegister = () => {
-        setSuccessMessage("Registrado com sucesso!");
-        setTimeout(() => {
-            setSuccessMessage("");
-            setIsRegistering(false);
-        }, 2000);
+    const handleRegister = async () => {
+        setElementRegisterDisabled(true);
+
+        if (!user || !gptKey || !password || !confirmPassword) {
+            setErrorMessage("Todos os campos são obrigatórios.");
+            setElementRegisterDisabled(false);
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            setErrorMessage("As senhas não coincidem.");
+            setElementRegisterDisabled(false);
+            return;
+        }
+
+        if (gptKey.length < 10) {
+            setErrorMessage("A chave do GPT deve ter pelo menos 10 caracteres.");
+            setElementRegisterDisabled(false);
+            return;
+        }
+
+        try {
+            const response = await request({
+                url: "/gptconfig/create",
+                method: "POST",
+                body: {
+                    name_key: user,
+                    api_key: gptKey,
+                    password: password,
+                    model_gpt: "gpt-4"
+                },
+            });
+
+            console.log(response)
+
+            setSuccessMessage("Registrado com sucesso!");
+            setTimeout(() => {
+                setSuccessMessage("");
+                setIsRegistering(false);
+            }, 1000);
+            setUser("");
+            setGptKey("");
+            setPassword("");
+            setConfirmPassword("");
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : "Erro desdconhecido";
+            setErrorMessage(errorMessage);
+            setElementRegisterDisabled(false);
+        } finally {
+            setElementRegisterDisabled(false);
+        }
     };
 
     return (
@@ -79,6 +128,17 @@ export default function Login() {
                         exit={{ opacity: 0, y: -50 }}
                     >
                         {successMessage}
+                    </motion.div>
+                )}
+
+                {errorMessage && (
+                    <motion.div
+                        className="absolute top-10 bg-red-500 text-white p-3 rounded-lg shadow-lg z-20"
+                        initial={{ opacity: 0, y: -50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -50 }}
+                    >
+                        {errorMessage}
                     </motion.div>
                 )}
 
@@ -117,7 +177,10 @@ export default function Login() {
                         </button>
 
                         <button
-                            onClick={() => setIsRegistering(true)}
+                            onClick={() => {
+                                setElementRegisterDisabled(false);
+                                setIsRegistering(true);
+                            }}
                             className="w-full bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg transition"
                         >
                             Registrar-se
@@ -139,6 +202,7 @@ export default function Login() {
                             placeholder="Usuário"
                             value={user}
                             onChange={(e) => setUser(e.target.value)}
+                            disabled={elementRegisterDisabled}
                             className="w-full p-2 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
 
@@ -147,6 +211,7 @@ export default function Login() {
                             placeholder="Chave do GPT"
                             value={gptKey}
                             onChange={(e) => setGptKey(e.target.value)}
+                            disabled={elementRegisterDisabled}
                             className="w-full p-2 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
 
@@ -155,6 +220,7 @@ export default function Login() {
                             placeholder="Senha"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            disabled={elementRegisterDisabled}
                             className="w-full p-2 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
 
@@ -163,14 +229,27 @@ export default function Login() {
                             placeholder="Confirmar Senha"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
+                            disabled={elementRegisterDisabled}
                             className="w-full p-2 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
 
                         <button
-                            onClick={handleRegister}
-                            className="w-full bg-white hover:bg-green-600 text-black font-bold py-2 px-4 rounded-lg transition"
+                            onClick={() => {
+                                handleRegister();
+                            }}
+                            className="w-full bg-white hover:bg-gray-600 text-black font-bold py-2 px-4 rounded-lg transition"
                         >
                             Finalizar Registro
+                        </button>
+                        
+                        <button
+                            onClick={() => {
+                                setIsRegistering(false);
+                                setErrorMessage("");
+                            }}
+                            className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition"
+                        >
+                            Voltar
                         </button>
                     </motion.div>
                 )}
