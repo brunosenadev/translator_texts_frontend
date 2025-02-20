@@ -15,8 +15,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Admin | WarmUP Whatsapp",
-  description: "Administrador do serviço de aquecimento de números de whatsapp.",
+  title: "Plataforma X",
+  description: "Não faço ideia do que faz.",
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="PT-BR">
+    <html lang="pt-BR">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

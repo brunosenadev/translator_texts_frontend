@@ -3,20 +3,21 @@ import { cookies } from "next/headers";
 import { SidebarProvider } from "../ui/sidebar";
 import { AppSidebar } from "../app-sidebar";
 import { AppSidebarInset } from "./app-sidebar-inset";
+import Login from "@/app/login/page";
 
 type ProviderProps = {
   children: React.ReactNode;
 };
 
 export async function Providers({ children }: ProviderProps) {
-  const cookieStore = await cookies();
+  const cookieStore = cookies();
+
+  const isLoggedIn = cookieStore.get("loggedIn")?.value === "true";
 
   const sidebarState = cookieStore.get("sidebar:state")?.value;
-  //* get sidebar width from cookie
   const sidebarWidth = cookieStore.get("sidebar:width")?.value;
 
   let defaultOpen = true;
-
   if (sidebarState) {
     defaultOpen = sidebarState === "true";
   }
@@ -28,11 +29,15 @@ export async function Providers({ children }: ProviderProps) {
       defaultTheme="dark"
       disableTransitionOnChange
     >
-      <SidebarProvider defaultOpen={defaultOpen} defaultWidth={sidebarWidth}>
-        <AppSidebar>
-          <AppSidebarInset>{children}</AppSidebarInset>
-        </AppSidebar>
-      </SidebarProvider>
+      {isLoggedIn ? (
+        <SidebarProvider defaultOpen={defaultOpen} defaultWidth={sidebarWidth}>
+          <AppSidebar>
+            <AppSidebarInset>{children}</AppSidebarInset>
+          </AppSidebar>
+        </SidebarProvider>
+      ) : (
+        <Login />
+      )}
     </ThemeProvider>
   );
 }
