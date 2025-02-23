@@ -2,14 +2,17 @@
 
 import * as React from "react";
 
-import { FaWhatsapp } from "react-icons/fa";
-
 import {
   ChevronRight,
   ChevronsUpDown,
   LogOut,
-  Users,
+  User,
   FileText,
+  Brain, 
+  Settings,
+  ClipboardList,
+  Bot,
+  Lightbulb, 
 } from "lucide-react";
 
 import { 
@@ -48,54 +51,69 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 
-const data = {
-  user: {
-    name: "Administrator",
-    avatar: "/avatars/sisplan.png",
-  },
-  navMain: [
-    {
-      title: "Management",
-      url: "#",
-      icon: FileText,
-      isActive: true,
-      items: [
-        {
-          title: "Main",
-          url: "/",
-        },
-        {
-          title: "Numbers Settings",
-          url: "/numbers",
-        },
-        {
-          title: "Servers Settings",
-          url: "/servers",
-        },
-        {
-          title: "Sessions Settings",
-          url: "/sessions",
-        },
-      ],
-    },
-    {
-      title: "Users",
-      url: "#",
-      icon: Users,
-      items: [
-        {
-          title: "Settings",
-          url: "/users",
-        },
-      ],
-    },
-  ],
-};
-
 export function AppSidebar({ children }: { children: React.ReactNode }) {
+  const [userName, setUserName] = React.useState("Usuário");
+  const [avatarUser, setAvatarUser] = React.useState("/usuario.png")
+
+  React.useEffect(() => {
+    setUserName(localStorage.getItem("userLogged") ?? "Usuário")
+    setAvatarUser("/usuario.png");
+  }, []);
+
+  const handleLogout = () => {
+    document.cookie = "loggedIn=false; path=/; SameSite=Lax";
+    window.location.href = "/login"
+  }
+
+  const data = {
+    user: {
+      name: userName,
+      avatar: avatarUser,
+    },
+    navMain: [
+      {
+        title: "Funcionalidades",
+        url: "#",
+        icon: Lightbulb,
+        items: [
+          {
+            title: "Tradução de Roteiros",
+            url: "#",
+            icon: FileText,
+          }
+        ]
+      },
+      {
+        title: "Cadastros",
+        url: "#",
+        icon: ClipboardList,
+        isActive: true,
+        items: [
+          {
+            title: "Agentes",
+            url: "/agents",
+            icon: Bot
+          },
+        ],
+      },
+      {
+        title: "Perfil",
+        url: "#",
+        icon: User,
+        items: [
+          {
+            title: "Configurações",
+            url: "/users",
+            icon: Settings
+          },
+        ],
+      },
+    ],
+  };
+
   return (
     <>
-      <Sidebar collapsible="icon">
+      <Sidebar collapsible="icon" >
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
@@ -103,17 +121,14 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton
                     size="lg"
-                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground mt-2"
                   >
-                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-danger text-sidebar-primary-foreground">
-                      <FaWhatsapp className="size-6" />
+                    <div className="flex aspect-square size-8 items-center justify-center bg-gray-600 rounded-lg text-sidebar-primary-foreground">
+                      <Brain className="size-6" />
                     </div>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
+                    <div className="grid flex-1 text-left text-md leading-relaxed">
                       <span className="truncate font-semibold">
-                        Warm Up Whatsapp
-                      </span>
-                      <span className="truncate text-xs">
-                        Admin
+                        Plataforma X 
                       </span>
                     </div>
                   </SidebarMenuButton>
@@ -124,7 +139,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>System</SidebarGroupLabel>
+            <SidebarGroupLabel>Sistema</SidebarGroupLabel>
             <SidebarMenu>
               {data.navMain.map((item) => (
                 <Collapsible
@@ -147,6 +162,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton asChild>
                               <Link href={subItem.url}>
+                                {subItem.icon && <subItem.icon />}
                                 <span>{subItem.title}</span>
                               </Link>
                             </SidebarMenuSubButton>
@@ -209,8 +225,8 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <LogOut />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut/>
                     Log out
                   </DropdownMenuItem>
                 </DropdownMenuContent>

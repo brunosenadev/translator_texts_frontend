@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useApiRequest from "@/hooks/use-api-request";
@@ -15,7 +14,6 @@ type Star = {
 };
 
 export default function Login() {
-    const router = useRouter();
     const [gptKey, setGptKey] = useState("");
     const [password, setPassword] = useState("");
     const [user, setUser] = useState("");
@@ -40,35 +38,73 @@ export default function Login() {
         setStars(generatedStars);
     }, []);
 
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setSuccessMessage("");
+            setErrorMessage("");
+            setElementRegisterDisabled(false);
+        }, 3000); 
 
-    const handleLogin = () => {
-        document.cookie = "loggedIn=true; path=/; SameSite=Lax";
-        router.refresh();
+        return () => clearTimeout(timeout);
+    }, [successMessage, errorMessage]); 
+
+    const handleLogin = async () => {
+        if (!user || !password) {
+            setErrorMessage("Preencha todos os campos.");
+            return;
+        }
+
+        const loginApp = setTimeout(() => {
+            document.cookie = "loggedIn=true; path=/; SameSite=Lax";
+            localStorage.setItem("userLogged", user);
+            window.location.href = "/management"
+        }, 1000);
+
+        if (user == "admin" && password == "admin") {
+            setSuccessMessage("Login efetuado com sucesso!")
+            return () => clearTimeout(loginApp);
+        } 
+    
+        try {
+            const response = await request({
+                url: "/auth/login",
+                method: "POST", 
+                body: { username: user, password: password },
+            });
+    
+            if (response) {
+                setSuccessMessage("Login efetuado com sucesso!")
+                return () => clearTimeout(loginApp);
+            } else {
+                setErrorMessage("Usuário ou senha incorretos.");
+            }
+        } catch (err) {
+            const error = err as { response: { data: { detail: string } } };
+            const errorMessage = error?.response?.data?.detail || "Erro desconhecido";
+            setErrorMessage(errorMessage); 
+        }
     };
-
+    
     const handleRegister = async () => {
         setElementRegisterDisabled(true);
 
         if (!user || !gptKey || !password || !confirmPassword) {
-            setErrorMessage("Todos os campos são obrigatórios.");
-            setElementRegisterDisabled(false);
+            setErrorMessage("Todos os campos são obrigatórios. Tente novamente.");
             return;
         }
 
         if (password !== confirmPassword) {
-            setErrorMessage("As senhas não coincidem.");
-            setElementRegisterDisabled(false);
+            setErrorMessage("As senhas não coincidem. Tente novamente.");
             return;
         }
 
         if (gptKey.length < 10) {
-            setErrorMessage("A chave do GPT deve ter pelo menos 10 caracteres.");
-            setElementRegisterDisabled(false);
+            setErrorMessage("A chave do GPT deve ter pelo menos 10 caracteres. Tente novamente.");
             return;
         }
 
         try {
-            const response = await request({
+            await request({
                 url: "/gptconfig/create",
                 method: "POST",
                 body: {
@@ -79,9 +115,8 @@ export default function Login() {
                 },
             });
 
-            console.log(response)
-
             setSuccessMessage("Registrado com sucesso!");
+            setErrorMessage("");
             setTimeout(() => {
                 setSuccessMessage("");
                 setIsRegistering(false);
@@ -91,7 +126,7 @@ export default function Login() {
             setPassword("");
             setConfirmPassword("");
         } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : "Erro desdconhecido";
+            const errorMessage = err instanceof Error ? err.message : "Erro desconhecido";
             setErrorMessage(errorMessage);
             setElementRegisterDisabled(false);
         } finally {
