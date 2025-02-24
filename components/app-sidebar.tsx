@@ -12,7 +12,7 @@ import {
   Settings,
   ClipboardList,
   Bot,
-  Lightbulb, 
+  Lightbulb
 } from "lucide-react";
 
 import { 
@@ -20,7 +20,6 @@ import {
   AvatarFallback, 
   AvatarImage 
 } from "@/components/ui/avatar";
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -75,6 +74,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
         title: "Funcionalidades",
         url: "#",
         icon: Lightbulb,
+        isActive: true,
         items: [
           {
             title: "Tradução de Roteiros",
@@ -87,11 +87,11 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
         title: "Cadastros",
         url: "#",
         icon: ClipboardList,
-        isActive: true,
+        isActive: false,
         items: [
           {
             title: "Agentes",
-            url: "/agents",
+            url: "/agents/agents_access",
             icon: Bot
           },
         ],

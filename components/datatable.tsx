@@ -24,7 +24,7 @@ export function DataTable<TData, TValue>({
                         {headerGroup.headers.map((header) => (
                             <TableHead 
                             key={header.id} 
-                            className={`font-bold w-[500px] ${ header.column.columnDef.header === 'Actions' ? 'text-center' : ''}`}
+                            className={`font-bold w-[500px] ${ header.column.columnDef.header === 'Ações' ? 'text-center' : ''}`}
                             >
                                 {header.isPlaceholder
                                     ? null
@@ -60,7 +60,7 @@ export function DataTable<TData, TValue>({
                             colSpan={columns.length}
                             className="h-24 text-center"
                         >
-                            No results.
+                            Sem resultados.
                         </TableCell>
                     </TableRow>
                 )}
