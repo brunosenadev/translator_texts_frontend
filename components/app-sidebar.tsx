@@ -78,7 +78,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
         items: [
           {
             title: "Tradução de Roteiros",
-            url: "#",
+            url: "/chat",
             icon: FileText,
           }
         ]
