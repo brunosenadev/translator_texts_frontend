@@ -10,7 +10,7 @@ const copyToClipboard = (text: string) => {
 };
 
 export default function GptChatSimulator() {
-    const [agents, setAgents] = useState<string[]>(["Agente 1", "Agente 2", "Agente 3"]);
+    const [agents, setAgents] = useState<string[]>([]);
     const [models, setModels] = useState<string[]>(["Modelo A", "Modelo B", "Modelo C"]);
     const [selectedAgent, setSelectedAgent] = useState<string>(agents[0]);
     const [selectedModel, setSelectedModel] = useState<string>(models[0]);
@@ -30,6 +30,11 @@ export default function GptChatSimulator() {
             setMessages((prev) => [...prev, botMessage]);
         }, 1000);
     };
+
+    useEffect(() => {
+        setAgents(["Agente 1", "Agente 2", "Agente 3"]);
+        setModels([]);
+    }, []);
 
     return (
         <div className="relative w-full flex flex-col items-center min-h-screen bg-black overflow-hidden p-4">

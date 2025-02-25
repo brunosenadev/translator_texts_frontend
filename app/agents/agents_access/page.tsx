@@ -6,7 +6,7 @@ import { DataTable } from "@/components/datatable";
 import useApiRequest from "@/hooks/use-api-request";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, Router } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 
 type Agent = {
     id: string;
@@ -45,6 +45,24 @@ export default function GptAgentList() {
     }, []);
 
 
+    // useEffect(() => {
+    //     const fetchAgents = async () => {
+    //         try {
+    //             const response = await request({
+    //                 url: "/agent",
+    //                 method: "GET",
+    //             });
+    //             setAgents(response);
+    //         } catch (err) {
+    //             const error = err as { response: { data: { detail: string } } };
+    //             const errorMessage = error?.response?.data?.detail || "Erro desconhecido";
+    //             setErrorMessage(errorMessage);
+    //         }
+    //     };
+
+    //     fetchAgents();
+    // }, []);
+
     useEffect(() => {
         const fetchAgents = async () => {
             try {
@@ -62,24 +80,6 @@ export default function GptAgentList() {
 
         fetchAgents();
     }, [request]);
-
-    useEffect(() => {
-        const fetchAgents = async () => {
-            try {
-                const response = await request({
-                    url: "/agent",
-                    method: "GET",
-                });
-                setAgents(response);
-            } catch (err) {
-                const error = err as { response: { data: { detail: string } } };
-                const errorMessage = error?.response?.data?.detail || "Erro desconhecido";
-                setErrorMessage(errorMessage);
-            }
-        };
-
-        fetchAgents();
-    }, []);
 
     const handleEdit = (agentId: string) => {
         window.location.href = `/agents/register_agent/${agentId}`;
@@ -106,7 +106,7 @@ export default function GptAgentList() {
         }
     };
 
-    const columns: ColumnDef<Agent, any>[] = [
+    const columns: ColumnDef<Agent>[] = [
         {
             header: "Nome do Agente",
             accessorKey: "name_agent",
