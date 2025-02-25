@@ -124,7 +124,7 @@ export default function GptAgentRegister() {
 
     return (
         <div className={`relative w-full ${hideScrollbar ? "overflow-hidden" : "overflow-auto"} flex items-center justify-center min-h-screen bg-black`}>
-            <div className="absolute inset-0 overflow-hidden">
+            <div className="inset-0 overflow-hidden">
                 {stars.map((star) => (
                     <motion.div
                         key={star.id}
