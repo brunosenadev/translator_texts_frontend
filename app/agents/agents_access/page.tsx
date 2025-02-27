@@ -44,25 +44,6 @@ export default function GptAgentList() {
         setStars(generatedStars);
     }, []);
 
-
-    // useEffect(() => {
-    //     const fetchAgents = async () => {
-    //         try {
-    //             const response = await request({
-    //                 url: "/agent",
-    //                 method: "GET",
-    //             });
-    //             setAgents(response);
-    //         } catch (err) {
-    //             const error = err as { response: { data: { detail: string } } };
-    //             const errorMessage = error?.response?.data?.detail || "Erro desconhecido";
-    //             setErrorMessage(errorMessage);
-    //         }
-    //     };
-
-    //     fetchAgents();
-    // }, []);
-
     useEffect(() => {
         const fetchAgents = async () => {
             try {

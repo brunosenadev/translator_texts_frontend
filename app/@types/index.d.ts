@@ -17,6 +17,13 @@ declare global {
     duration: number;
   };
 
+  export type AgentGPT = {
+    id: number;
+    name_agent: string;
+    description_agent: string;
+    rules_agent: string;
+  };
+
   export type ColumnsDefMainType = ColumnDef<DataMain>[];
 
   export interface DataNumber {
