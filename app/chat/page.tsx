@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { AnimatePresence } from "framer-motion";
 import { Clipboard } from "lucide-react";
@@ -35,22 +35,34 @@ export default function GptChatSimulator() {
 
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-    const sendMessage = (msg: string = "") => {
-        if (!inputMessage.trim()) return;
+    // const sendMessage = (msg: string = "") => {
+    //     if (!inputMessage.trim()) return;
 
+    //     if (msg === "Iniciar") {
+    //         setMessages([{ sender: "Você", text: msg }]);
+    //     } else {
+    //         const userMessage = { sender: "Você", text: inputMessage };
+    //         setMessages((prev) => [...prev, userMessage]);
+    //         setInputMessage("");
+    //     };
+
+        // setTimeout(() => {
+        //     const botMessage = { sender: "ChatGPT", text: `Você disse: ${userMessage.text} usando ${selectedAgent} e o modelo ${selectedModel}` };
+        //     setMessages((prev) => [...prev, botMessage]);
+        // }, 1000);
+    // };
+
+    const sendMessage = useCallback((msg: string = "") => {
+        if (!inputMessage.trim() && msg !== "Iniciar") return;
+    
         if (msg === "Iniciar") {
             setMessages([{ sender: "Você", text: msg }]);
         } else {
             const userMessage = { sender: "Você", text: inputMessage };
             setMessages((prev) => [...prev, userMessage]);
             setInputMessage("");
-        };
-
-        // setTimeout(() => {
-        //     const botMessage = { sender: "ChatGPT", text: `Você disse: ${userMessage.text} usando ${selectedAgent} e o modelo ${selectedModel}` };
-        //     setMessages((prev) => [...prev, botMessage]);
-        // }, 1000);
-    };
+        }
+    }, [inputMessage]);
 
     const sendMessageToBackend = async (text: string) => {
         try {
@@ -97,10 +109,12 @@ export default function GptChatSimulator() {
         }));
 
         setStars(generatedStars);
+    }, [])
 
-        //// fetchAgents();
+    useEffect(() => {
+        fetchAgents();
         setModels(["GPT-4"]);
-        setSelectedAgent("Agente 1");
+        // setSelectedAgent("Agente 1");
         setSelectedModel("GPT-4");
 
         if (!effectRan.current) {
@@ -108,7 +122,7 @@ export default function GptChatSimulator() {
             effectRan.current = true;
         };
 
-    }, []);
+    }, [sendMessage]);
 
     const handleCleanChat = () => {
         setMessages([]);
@@ -119,7 +133,7 @@ export default function GptChatSimulator() {
     }, [messages]);
 
     return (
-        <div className="relative w-full flex flex-col items-center min-h-screen bg-black p-4 overflow-hidden">
+        <div className="relative w-full flex flex-col items-center h-full bg-black p-4 overflow-hidden">
             {successMessage && (
                 <motion.div
                     className="absolute top-10 bg-green-500 text-white p-3 rounded-lg shadow-lg z-20"
@@ -165,7 +179,7 @@ export default function GptChatSimulator() {
             </div>
 
             <div className="flex-1 w-full max-w-2xl flex flex-col gap-4 items-center justify-start p-4 z-10">
-                <div className="w-full h-full max-h-[68vh] overflow-y-auto">
+                <div className="w-full h-full mt-10 max-h-[68vh] overflow-y-auto">
                     <AnimatePresence mode="wait">
                         {messages.map((msg, index) => (
                             <motion.div
@@ -214,7 +228,7 @@ export default function GptChatSimulator() {
                     <select
                         value={selectedAgent}
                         onChange={(e) => setSelectedAgent(e.target.value)}
-                        className="p-2 rounded-lg w-[79%] ml-1 bg-gray-800 text-white"
+                        className="p-2 rounded-lg w-[79%] bg-gray-800 text-white"
                     >
                         {agents.map((agent) => (
                             <option key={agent.id} value={agent.id}>
