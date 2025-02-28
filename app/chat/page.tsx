@@ -22,7 +22,7 @@ const copyToClipboard = (text: string) => {
 export default function GptChatSimulator() {
     const [agents, setAgents] = useState<AgentGPT[]>([]);
     const [models, setModels] = useState<string[]>([]);
-    const [selectedAgent, setSelectedAgent] = useState<string>("");
+    const [selectedAgent, setSelectedAgent] = useState<number>(-1);
     const [selectedModel, setSelectedModel] = useState<string>("");
     const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
     const [inputMessage, setInputMessage] = useState("");
@@ -46,17 +46,18 @@ export default function GptChatSimulator() {
     //         setInputMessage("");
     //     };
 
-        // setTimeout(() => {
-        //     const botMessage = { sender: "ChatGPT", text: `Você disse: ${userMessage.text} usando ${selectedAgent} e o modelo ${selectedModel}` };
-        //     setMessages((prev) => [...prev, botMessage]);
-        // }, 1000);
+    // setTimeout(() => {
+    //     const botMessage = { sender: "ChatGPT", text: `Você disse: ${userMessage.text} usando ${selectedAgent} e o modelo ${selectedModel}` };
+    //     setMessages((prev) => [...prev, botMessage]);
+    // }, 1000);
     // };
 
-    const sendMessage = useCallback((msg: string = "") => {
+    const sendMessage = useCallback((msg: string = "", agentInitial: number = 0) => {
         if (!inputMessage.trim() && msg !== "Iniciar") return;
-    
+
         if (msg === "Iniciar") {
             setMessages([{ sender: "Você", text: msg }]);
+            sendMessageToBackend(msg, agentInitial);
         } else {
             const userMessage = { sender: "Você", text: inputMessage };
             setMessages((prev) => [...prev, userMessage]);
@@ -64,13 +65,13 @@ export default function GptChatSimulator() {
         }
     }, [inputMessage]);
 
-    const sendMessageToBackend = async (text: string) => {
+    const sendMessageToBackend = async (text: string, agent: number = -1) => {
         try {
             const encodedMessage = encodeURIComponent(text);
             const response = await request({
                 url: "/gpt_chat/send_message",
                 method: "POST",
-                body: { message: encodedMessage, model: selectedModel },
+                body: { message: encodedMessage, model: selectedModel, agent: agent, name_user: localStorage.getItem("userLogged") ?? "" },
             });
 
             return response.response;
@@ -92,6 +93,17 @@ export default function GptChatSimulator() {
             }
 
             setAgents(response);
+
+            if (response.length > 0) {
+                const firstAgent = response[0];
+                setSelectedAgent(firstAgent.id);
+
+                if (!effectRan.current) {
+                    effectRan.current = true;
+                    sendMessage("Iniciar", firstAgent.id);
+                }
+            }
+
         } catch (err) {
             const error = err as { message: string };
             setErrorMessage(error?.message || "Erro desconhecido ao buscar agentes.");
@@ -114,14 +126,7 @@ export default function GptChatSimulator() {
     useEffect(() => {
         fetchAgents();
         setModels(["GPT-4"]);
-        // setSelectedAgent("Agente 1");
         setSelectedModel("GPT-4");
-
-        if (!effectRan.current) {
-            sendMessage("Iniciar");
-            effectRan.current = true;
-        };
-
     }, [sendMessage]);
 
     const handleCleanChat = () => {
@@ -227,7 +232,7 @@ export default function GptChatSimulator() {
                 <div className="flex space-x-2 w-full">
                     <select
                         value={selectedAgent}
-                        onChange={(e) => setSelectedAgent(e.target.value)}
+                        onChange={(e) => setSelectedAgent(Number(e.target.value))}
                         className="p-2 rounded-lg w-[79%] bg-gray-800 text-white"
                     >
                         {agents.map((agent) => (
